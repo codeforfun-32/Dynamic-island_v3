@@ -1,0 +1,119 @@
+import { Theme } from "styles/themes.slint";
+import { Icons } from "styles/icons.slint";
+import { Icon } from "components/controls.slint";
+
+component SideItem inherits Rectangle {
+    in property <string> d;
+    in property <string> label;
+    in property <bool> active;
+    callback clicked();
+
+    height: 38px;
+    border-radius: 10px;
+    background: root.active ? #ffffff1c : (ta.has-hover ? #ffffff10 : transparent);
+    animate background { duration: 140ms; }
+
+    Icon {
+        x: 12px;
+        y: 10px;
+        width: 18px;
+        height: 18px;
+        d: root.d;
+        tint: root.active ? Theme.text : Theme.text-dim;
+    }
+    Text {
+        x: 42px;
+        y: 0px;
+        width: parent.width - 52px;
+        height: parent.height;
+        text: root.label;
+        color: root.active ? Theme.text : Theme.text-dim;
+        font-size: 14px;
+        vertical-alignment: center;
+    }
+    ta := TouchArea {
+        mouse-cursor: pointer;
+        clicked => { root.clicked(); }
+    }
+}
+
+export component SettingsWindow inherits Window {
+    title: "Dynamic Island - Settings";
+    preferred-width: 740px;
+    preferred-height: 500px;
+    min-width: 600px;
+    min-height: 400px;
+    background: #0f1013;
+
+    in-out property <int> section: 0;
+
+    // sidebar
+    Rectangle {
+        x: 0px;
+        y: 0px;
+        width: 210px;
+        height: parent.height;
+        background: #15161a;
+
+        Text {
+            x: 22px;
+            y: 22px;
+            width: parent.width - 44px;
+            height: 28px;
+            text: "Settings";
+            color: Theme.text;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        SideItem { x: 12px; y: 72px;  width: parent.width - 24px; d: Icons.sliders; label: "General";       active: root.section == 0; clicked => { root.section = 0; } }
+        SideItem { x: 12px; y: 114px; width: parent.width - 24px; d: Icons.moon;    label: "Appearance";    active: root.section == 1; clicked => { root.section = 1; } }
+        SideItem { x: 12px; y: 156px; width: parent.width - 24px; d: Icons.chip;    label: "Widgets";       active: root.section == 2; clicked => { root.section = 2; } }
+        SideItem { x: 12px; y: 198px; width: parent.width - 24px; d: Icons.bell;    label: "Notifications"; active: root.section == 3; clicked => { root.section = 3; } }
+        SideItem { x: 12px; y: 240px; width: parent.width - 24px; d: Icons.info;    label: "About";         active: root.section == 4; clicked => { root.section = 4; } }
+    }
+
+    // content
+    Rectangle {
+        x: 210px;
+        y: 0px;
+        width: parent.width - 210px;
+        height: parent.height;
+
+        Text {
+            x: 36px;
+            y: 28px;
+            width: parent.width - 72px;
+            height: 36px;
+            text: root.section == 0 ? "General"
+                : (root.section == 1 ? "Appearance"
+                : (root.section == 2 ? "Widgets"
+                : (root.section == 3 ? "Notifications" : "About")));
+            color: Theme.text;
+            font-size: 26px;
+            font-weight: 700;
+        }
+
+        Rectangle {
+            x: 36px;
+            y: 84px;
+            width: parent.width - 72px;
+            height: 220px;
+            border-radius: 18px;
+            background: #ffffff0d;
+
+            Text {
+                x: 24px;
+                y: 20px;
+                width: parent.width - 48px;
+                height: 24px;
+                text: "Settings for this section will be designed next.";
+                color: Theme.text-dim;
+                font-size: 14px;
+            }
+            Rectangle { x: 24px; y: 70px;  width: (parent.width - 48px) * 0.6; height: 12px; border-radius: 6px; background: #ffffff12; }
+            Rectangle { x: 24px; y: 104px; width: (parent.width - 48px) * 0.4; height: 12px; border-radius: 6px; background: #ffffff12; }
+            Rectangle { x: 24px; y: 138px; width: (parent.width - 48px) * 0.5; height: 12px; border-radius: 6px; background: #ffffff12; }
+        }
+    }
+}
